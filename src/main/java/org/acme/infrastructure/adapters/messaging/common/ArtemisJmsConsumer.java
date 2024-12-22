@@ -1,5 +1,6 @@
 package org.acme.infrastructure.adapters.messaging.common;
 
+import jakarta.inject.Inject;
 import jakarta.jms.ConnectionFactory;
 import jakarta.jms.JMSConsumer;
 import jakarta.jms.JMSContext;
@@ -15,13 +16,13 @@ import java.util.Optional;
 public class ArtemisJmsConsumer {
 
    private final ConnectionFactory connectionFactory;
-   private final XAConnectionFactory xaConnectionFactory;
-   private final TransactionManager tm;
 
-   public ArtemisJmsConsumer(ConnectionFactory connectionFactory, XAConnectionFactory xaConnectionFactory, TransactionManager tm) {
+   @Inject
+   @SuppressWarnings("CdiInjectionPointsInspection")
+   TransactionManager tm;
+
+   public ArtemisJmsConsumer(ConnectionFactory connectionFactory) {
       this.connectionFactory = connectionFactory;
-      this.xaConnectionFactory = xaConnectionFactory;
-      this.tm = tm;
    }
 
    public Optional<Message> receive(String queueName, long timeout) {
@@ -36,10 +37,9 @@ public class ArtemisJmsConsumer {
    }
 
    public Optional<Message> receiveXA(String queueName, long timeout, boolean rollback) throws SystemException, RollbackException {
-      XAJMSContext context = xaConnectionFactory.createXAContext();
+      JMSContext context = connectionFactory.createContext();
       JMSConsumer consumer = context.createConsumer(context.createQueue(queueName));
 
-      tm.getTransaction().enlistResource(context.getXAResource());
       tm.getTransaction().registerSynchronization(SynchronizationObject.from(context, consumer));
 
       if (rollback) {

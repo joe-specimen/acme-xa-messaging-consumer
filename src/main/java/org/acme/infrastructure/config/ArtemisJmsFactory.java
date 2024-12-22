@@ -14,21 +14,17 @@ public class ArtemisJmsFactory {
    @Produces
    @ApplicationScoped
    ArtemisJmsConsumer artemisJmsConsumerManager(
-       @SuppressWarnings("CdiInjectionPointsInspection") ConnectionFactory connectionFactory,
-       @SuppressWarnings("CdiInjectionPointsInspection") XAConnectionFactory xaConnectionFactory,
-       @SuppressWarnings("CdiInjectionPointsInspection") TransactionManager tm
+       @SuppressWarnings("CdiInjectionPointsInspection") ConnectionFactory connectionFactory
    ) {
-      return new ArtemisJmsConsumer(connectionFactory, xaConnectionFactory, tm);
+      return new ArtemisJmsConsumer(connectionFactory);
    }
 
    @Produces
    @ApplicationScoped
    ArtemisJmsProducer artemisJmsProducerManager(
-       @SuppressWarnings("CdiInjectionPointsInspection") ConnectionFactory connectionFactory,
-       @SuppressWarnings("CdiInjectionPointsInspection") XAConnectionFactory xaConnectionFactory,
-       @SuppressWarnings("CdiInjectionPointsInspection") TransactionManager tm
+       @SuppressWarnings("CdiInjectionPointsInspection") ConnectionFactory connectionFactory
    ) {
-      return new ArtemisJmsProducer(connectionFactory, xaConnectionFactory, tm);
+      return new ArtemisJmsProducer(connectionFactory);
    }
 
 }

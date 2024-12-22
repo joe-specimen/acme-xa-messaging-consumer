@@ -1,5 +1,6 @@
 package org.acme.infrastructure.adapters.messaging.common;
 
+import jakarta.inject.Inject;
 import jakarta.jms.ConnectionFactory;
 import jakarta.jms.JMSContext;
 import jakarta.jms.JMSProducer;
@@ -12,15 +13,14 @@ import jakarta.transaction.TransactionManager;
 public class ArtemisJmsProducer {
 
    private final ConnectionFactory connectionFactory;
-   private final XAConnectionFactory xaConnectionFactory;
-   private final TransactionManager tm;
+
+   @Inject
+   @SuppressWarnings("CdiInjectionPointsInspection")
+   TransactionManager tm;
 
 
-   public ArtemisJmsProducer(ConnectionFactory connectionFactory, XAConnectionFactory xaConnectionFactory,
-                             TransactionManager tm) {
+   public ArtemisJmsProducer(ConnectionFactory connectionFactory) {
       this.connectionFactory = connectionFactory;
-      this.xaConnectionFactory = xaConnectionFactory;
-      this.tm = tm;
    }
 
    public void send(String queueName, String body) {
@@ -34,8 +34,8 @@ public class ArtemisJmsProducer {
    }
 
    public void sendXA(String queueName, String body, boolean rollback) throws SystemException, RollbackException {
-      XAJMSContext context = xaConnectionFactory.createXAContext();
-      tm.getTransaction().enlistResource(context.getXAResource());
+      JMSContext context = connectionFactory.createContext();
+
       tm.getTransaction().registerSynchronization(SynchronizationObject.from(context));
 
       send(queueName, context, body);
