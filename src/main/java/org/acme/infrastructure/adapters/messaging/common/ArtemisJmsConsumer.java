@@ -17,12 +17,11 @@ public class ArtemisJmsConsumer {
 
    private final ConnectionFactory connectionFactory;
 
-   @Inject
-   @SuppressWarnings("CdiInjectionPointsInspection")
-   TransactionManager tm;
+   private final TransactionManager tm;
 
-   public ArtemisJmsConsumer(ConnectionFactory connectionFactory) {
+   public ArtemisJmsConsumer(ConnectionFactory connectionFactory, TransactionManager tm) {
       this.connectionFactory = connectionFactory;
+      this.tm = tm;
    }
 
    public Optional<Message> receive(String queueName, long timeout) {

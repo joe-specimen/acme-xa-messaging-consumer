@@ -14,9 +14,10 @@ public class ArtemisJmsFactory {
    @Produces
    @ApplicationScoped
    ArtemisJmsConsumer artemisJmsConsumerManager(
-       @SuppressWarnings("CdiInjectionPointsInspection") ConnectionFactory connectionFactory
+       @SuppressWarnings("CdiInjectionPointsInspection") ConnectionFactory connectionFactory,
+       @SuppressWarnings("CdiInjectionPointsInspection") TransactionManager tm
    ) {
-      return new ArtemisJmsConsumer(connectionFactory);
+      return new ArtemisJmsConsumer(connectionFactory, tm);
    }
 
    @Produces

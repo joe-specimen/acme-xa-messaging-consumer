@@ -14,6 +14,7 @@ import lombok.extern.jbosslog.JBossLog;
 public class MessageConsumerWorker implements Runnable {
 
    private final ExecutorService scheduler = Executors.newSingleThreadExecutor();
+   private boolean stop = false;
 
    @Inject
    MessageConsumer messageConsumer;
@@ -23,12 +24,13 @@ public class MessageConsumerWorker implements Runnable {
    }
 
    void onStop(@Observes ShutdownEvent ev) {
+      stop = true;
       scheduler.shutdown();
    }
 
    @Override
    public void run() {
-      while (true) {
+      while (!stop) {
          try {
             messageConsumer.consumeXA();
          } catch (Exception e) {
