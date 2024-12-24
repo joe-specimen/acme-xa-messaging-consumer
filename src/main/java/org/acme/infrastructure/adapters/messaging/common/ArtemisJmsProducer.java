@@ -1,11 +1,8 @@
 package org.acme.infrastructure.adapters.messaging.common;
 
-import jakarta.inject.Inject;
 import jakarta.jms.ConnectionFactory;
 import jakarta.jms.JMSContext;
 import jakarta.jms.JMSProducer;
-import jakarta.jms.XAConnectionFactory;
-import jakarta.jms.XAJMSContext;
 import jakarta.transaction.RollbackException;
 import jakarta.transaction.SystemException;
 import jakarta.transaction.TransactionManager;
@@ -14,13 +11,12 @@ public class ArtemisJmsProducer {
 
    private final ConnectionFactory connectionFactory;
 
-   @Inject
-   @SuppressWarnings("CdiInjectionPointsInspection")
-   TransactionManager tm;
+   private final TransactionManager tm;
 
 
-   public ArtemisJmsProducer(ConnectionFactory connectionFactory) {
+   public ArtemisJmsProducer(ConnectionFactory connectionFactory, TransactionManager tm) {
       this.connectionFactory = connectionFactory;
+      this.tm = tm;
    }
 
    public void send(String queueName, String body) {

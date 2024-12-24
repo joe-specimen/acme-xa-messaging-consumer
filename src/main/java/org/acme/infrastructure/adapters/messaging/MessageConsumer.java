@@ -32,7 +32,7 @@ public class MessageConsumer {
    public void consumeXA() throws SystemException, RollbackException, JMSException, JsonProcessingException {
       log.infof("Waiting for message!");
 
-      Optional<Message> possibleMessage = artemisJmsConsumer.receiveXA("queueDemo", 1000L);
+      Optional<Message> possibleMessage = artemisJmsConsumer.receiveXA("DLQ", 1000L);
 
       if (possibleMessage.isEmpty()) {
          return;

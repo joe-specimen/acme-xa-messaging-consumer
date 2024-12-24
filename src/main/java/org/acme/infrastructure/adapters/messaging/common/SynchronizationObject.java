@@ -3,12 +3,11 @@ package org.acme.infrastructure.adapters.messaging.common;
 import jakarta.jms.JMSConsumer;
 import jakarta.jms.JMSContext;
 import jakarta.transaction.Synchronization;
-import java.util.Optional;
 
 public class SynchronizationObject implements Synchronization {
 
    private final JMSContext context;
-   private final Optional<JMSConsumer> possibleConsumer;
+   private final JMSConsumer possibleConsumer;
 
    public static SynchronizationObject from(JMSContext context) {
       return new SynchronizationObject(context, null);
@@ -20,7 +19,7 @@ public class SynchronizationObject implements Synchronization {
 
    private SynchronizationObject(JMSContext context, JMSConsumer consumer) {
       this.context = context;
-      this.possibleConsumer = Optional.ofNullable(consumer);
+      this.possibleConsumer = consumer;
    }
 
    @Override
@@ -28,7 +27,10 @@ public class SynchronizationObject implements Synchronization {
 
    @Override
    public void afterCompletion(int status) {
-      possibleConsumer.ifPresent(jmsConsumer -> jmsConsumer.close());
+      if (possibleConsumer != null) {
+         possibleConsumer.close();
+      }
+
       context.close();
    }
 }
